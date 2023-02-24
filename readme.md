@@ -24,7 +24,7 @@
 
 Setメゾットは変数を宣言します。
 
-```
+```aki
 Set 変数名 v>変数のvalue 型
 ```
 
@@ -40,7 +40,7 @@ Sayメゾットではコンソールに出力をします。
 
 例文
 
-```
+```aki
     Set Impotant v>HI str
     Set VeryStrong v>HI str
     Set Other v>Bye str
@@ -66,7 +66,7 @@ Sayメゾットではコンソールに出力をします。
 
 Str型の物をNumber型に変換します。
 
-```
+```aki
    Set Ten v>10 str
 
    say Whattype=Ten 
@@ -80,7 +80,7 @@ Str型の物をNumber型に変換します。
 
 しかし、この場合はMaybe numに変換され、普通のNumber型とは区別されます。
 
-```
+```aki
    Set MaybeTen v>ten str
 
    say Whattype=MaybeTen
@@ -98,4 +98,3 @@ Str型の物をNumber型に変換します。
 ifコンパイルに成功した物を実行するための関数。
 
 必要引数はArray（関数型）
-

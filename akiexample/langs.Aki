@@ -1,0 +1,28 @@
+# Tanosikereba ok !
+
+Set A v>a str
+Set anythingName v>10 num
+Set Nube v>100 str
+Set NubeJSON v>100 str
+
+say >NubeJSON Str+"HelloWorld!"
+
+say >A Space< Str+"+" Space< >anythingName Space< Str+"is" Space< Str+"20!"
+
+say >NubeJSON Space< WhatType=NubeJSON
+
+if >A !== >NubeJSON return { say Str+"この条件はTrueです!!!" }
+
+
+
+
+# ligegiuehrgiuhrglisrnthglkushlgikhselrtiughseilurghseiurtghb.rkhkurjhgeruthg
+# rgheiurgheirugheiuhgieugheiughiguheiughieurgheirughreiuhergiuheiguhegriuhegiuh
+#hfiehriuehgiuhegriuhegiuhgheriguheirugheriguhegiruhergiuheiruhgiuehg
+#hgoe;igheoihrgeoihgoeihg;oisehgo;isehrgoiusehrgohse;rgoihseogiheriohgsoiehgroeirhg
+#o;gh;eorigh;oeirhoihrgoihgoiehgoierhgoierhgoeihgeoirgheorighegiorhgoihegoihrge
+#ohe;ogheriogeghe;oghe;oiherg;oihegr;oiherg;oihg;oihg;oiherg;iohrg;oihgerio;h
+
+
+
+
