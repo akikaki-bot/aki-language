@@ -48,17 +48,18 @@ Sayメゾットではコンソールに出力をします。
     Set Number v>10 num
     Set IsNumber v> str
 
-    if Impotant === VeryStrong return { say Str+"一致！" }
-    if Impotant === Number return { say Str+"コンパイルエラーになるよ"}
-    if Impotant !== Other return { say Str+"不一致！" }
-    if Impotant == VeryStrong return { say Str+"ほぼJavaScriptってこと！？"}
+    if >Impotant === >VeryStrong return { say Str+"一致！" }
+    # ifで変数を出すときは、必ず変数の前に > を付けるのがルールです。
+    if >Impotant === >Number return { say Str+"コンパイルエラーになるよ"}
+    if >Impotant !== >Other return { say Str+"不一致！" }
+    if >Impotant == >VeryStrong return { say Str+"ほぼJavaScriptってこと！？"}
 
 　　IsNumber toInt
     VeryStrong toInt 
     #↑ これは変換できないので Maybe numになる
 
-    if Number Istype VeryStrong return { say Str+"一緒にならないし、コンパイルエラーになるよ！" }
-    if Number Istype IsNumber return { say Str+"型一緒！" } 
+    if >Number Istype >VeryStrong return { say Str+"一緒にならないし、コンパイルエラーになるよ！" }
+    if >Number Istype >IsNumber return { say Str+"型一緒！" } 
 ```
 
 ### Core - toInt

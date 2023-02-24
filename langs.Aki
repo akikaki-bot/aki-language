@@ -94,3 +94,5 @@ if >A !== >NubeJSON return { say Str+"この条件はTrueです!!!" }
 
 
 
+
+
