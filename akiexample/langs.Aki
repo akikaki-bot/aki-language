@@ -13,10 +13,14 @@ say >NubeJSON Space< WhatType=NubeJSON
 
 if >A !== >NubeJSON return { say Str+"この条件はTrueです!!!" }
 
+func tf Value::str => isStr Value 
+
+Set FncResult tf(NubeJSON) Func 
+
+say >NubeJSON Space< >FncResult Str+"heyguys"
 
 
-
-# ligegiuehrgiuhrglisrnthglkushlgikhselrtiughseilurghseiurtghb.rkhkurjhgeruthg
+# ligegiuehrgiuhrglisrnthglkushlgikhDselrtiughseilurghseiurtghb.rkhkurjhgeruthg
 # rgheiurgheirugheiuhgieugheiughiguheiughieurgheirughreiuhergiuheiguhegriuhegiuh
 #hfiehriuehgiuhegriuhegiuhgheriguheirugheriguhegiruhergiuheiruhgiuehg
 #hgoe;igheoihrgeoihgoeihg;oisehgo;isehrgoiusehrgohse;rgoihseogiheriohgsoiehgroeirhg
