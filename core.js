@@ -16,6 +16,13 @@ class ErrorMessage  {
     }
 }
 
+class WarningMessage {
+    constructor(title,message) {
+        console.log(`\n\n [\u001b[33m${title ? title : "？"}\u001b[0m]\n\n ${message} \n`)
+    }
+}
+
+module.exports = WarningMessage
 module.exports = ErrorMessage
 
 let ProcessingLine = 0
@@ -38,6 +45,7 @@ const TEMP_Hensuu = []
  */
 const CORE_Functions = []
 const RunningFunction = false;
+let FunctionAdding = false;
 let AkiResponseFunctioning = false
 
 const STARTMIN = new Date().getSeconds()
@@ -47,6 +55,7 @@ console.log(`Akilang : 処理を開始 ms ${STARTTHESYSTEM}\n\n\n`)
 class Core {
 
     set(code) {    
+        if(!String(code).match(/Set\s[A-Z,a-z,0-9]+\s(v>)[A-Z,a-z,0-9]+\s(str|num|any|Func)/)) return;
         const _saveCode = code.replaceAll(' ',",").split(',')
         if(code.match(/#/)) return;
         if(_saveCode[3] === "num"){
@@ -64,6 +73,7 @@ class Core {
     }
 
     toInt(value){
+        if(FunctionAdding === true) return;
         let HensuuLine = 0
         const _toIntFunction = value.replaceAll(' ',",").split(",")
         //console.log(_toIntFunction)
@@ -88,7 +98,7 @@ class Core {
         }
     }
 
-    // Todo 実装する
+    // Todo 実装する -> CoreClassではなくUtilClassに変更
     MathSum(value) {
         const _toChangeValue = String(value).replaceAll(' ',",").split(',')
     }
@@ -111,10 +121,18 @@ class Core {
     }
 
     runFunc(func) {
-       
+        //tf(NubeJSON)
+        //が対象だから.... たぶんReplaceしてSplitすればいいや]
+       const funcCall = String(String(func).match(/[A-Z,a-z,0-9]+\([A-Z,a-z,0-9]+\)/)).replace('(',",").replace(')',"").split(',')
+       console.log(funcCall)
+    }
+
+    exefunc(code) {
+
     }
 
     func (code) {
+       FunctionAdding = true;
        const oldfunc = String(code).split(" ")
        const funcName = oldfunc[1] ? oldfunc[1] : NotFunction
        const funcVal = oldfunc[2] ? oldfunc[2] : NotFunction
@@ -130,9 +148,9 @@ class Core {
        const ArgmentsType = OLDvalue[1]
        if(!ArgmentsType.match(/str|num/)) throw new ErrorMessage('[AK016] Function type','関数の型が不明です。 str (String) or num(Number)  で指定できます。 '+`\n ${ProcessingLine}行目 - Method`)
        
-       const ReturnFunctions = oldfunc.slice(4)
+       const ReturnFunctions = oldfunc.slice(4).join(',').replaceAll(';',",").split(',')
        ReturnFunctions.map((v) => v === "" ? ReturnFunctions.splice(ReturnFunctions.indexOf(v), 1) : void 0) //無駄を消す
-       //console.log(ReturnFunctions)
+       console.log(ReturnFunctions)
        
        /**
         * @type {import('./types/type').AkiLanguage_Function}
@@ -144,64 +162,135 @@ class Core {
           ReturnFunctions : ReturnFunctions 
        }
        CORE_Functions.push(SaveFunc)
+       FunctionAdding = false;
     }
 
-    ifCompile(value){
+    ifCompile(v){
+        if(FunctionAdding === true) return;
+       const value = String(v).match(/if\s(>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")+\s(===|!==|Istype|==)\s(\>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")\sreturn\s{[^~]+}/)[0]
        const _codeArray = value.replaceAll(' ',",").split(',')
-       let HikakuArray_1 = []
-       let HikakuArray_2 = []
-       CORE_Hensuu.forEach((v) => {
-          if(v[1] === _codeArray[1].replace(">","")){
-             HikakuArray_1 = String(v).split(',')
-          }
-          if(v[1] === _codeArray[3].replace(">","")){
-             HikakuArray_2 = String(v).split(',')
-          }
-       })
-       if(AkiResponseFunctioning) {
-          TEMP_Hensuu.forEach((v) => {
-            if(v[1] === _codeArray[1].replace(">","")){
-                HikakuArray_1 = String(v).split(',')
-             }
-             if(v[1] === _codeArray[3].replace(">","")){
-                HikakuArray_2 = String(v).split(',')
-             }
+       //* 新しい方 - Vのみが変数、TYPEV がVの型 VNがVに付けられている名前
+       let V1;
+       let V2;
+       let TYPEV1;
+       let TYPEV2;
+       let VN1; // 不使用
+       let VN2; //- 不使用
+       //* Version 1.0.2 移行
+       CORE_Hensuu.map((v) => {
+        if(!(Array(v).join(' ').replaceAll(","," ").match(/Set\s[A-Z,a-z,0-9]+\sv\>[A-Z,a-z,0-9]+\s(str|num|any)/))) throw new ErrorMessage('[AC001] 内部エラー',"不明なSetArrayです。この変数は使用できません : "+v)
+
+        if(String(_codeArray[1]).match(/Str\+\"[A-Z,a-z,0-9]+\"/)) {
+             V1 = _codeArray[1].replace('Str+',"").replaceAll('"',"") 
+             TYPEV1 = "str"
+        }
+        if(v[1] === _codeArray[1].replace('>',"") && !(String(_codeArray[1]).match(/Str\+\"[A-Z,a-z,0-9]+\"/))){
+             V1 = v[2].replace('v>',"") 
+             TYPEV1 = v[3]
+        }
+
+        if(String(_codeArray[3]).match(/Str\+\"[A-Z,a-z,0-9]+\"/)) {
+             V2 = _codeArray[3].replace('Str+',"").replaceAll('"',"")
+             TYPEV2 = "str"
+        }
+        if(v[1] === _codeArray[3].replace('>',"") && !(String(_codeArray[3]).match(/Str\+\"[A-Z,a-z,0-9]+\"/))) {
+             V2 = v[2].replace('v>',"") 
+             TYPEV2 = v[3]
+        }
         })
-       }
-       //console.log(this.CheckHennsuu(HikakuArray_1[1]).includes(true) ? "haitteru" : "nai")
-       //console.log(this.CheckHennsuu(HikakuArray_2[1]).includes(true) ? "haitteru" : "nai")
+        console.log(`${V1} : ${V2} = ${TYPEV1} : ${TYPEV2}`)
 
-       if(_codeArray[4] !== "return") throw new ErrorMessage('[AK007]', "Returnは必須です。"+`\n ${ProcessingLine}行目 - Method`)
+        if(_codeArray[4] !== "return") throw new ErrorMessage('[AK007]', "Returnは必須です。"+`\n ${ProcessingLine}行目 - Method`)
+        if(TYPEV1 !== TYPEV2) throw new ErrorMessage('[AK004] IF文',"IF文での型の比較はいつでもfalseとなってしまいます。比較の際は同じ型を参照してください！"+`\n ${ProcessingLine}行目 - Method`)
+        if(!V1 || !V2) throw new ErrorMessage("[AK012] 不明","比較先の変数が存在しません。"+`\n ${ProcessingLine}行目 - Method`)
 
-       if(!(HikakuArray_1[3] === HikakuArray_2[3])) throw new ErrorMessage('[AK004] IF文',"IF文の型の比較はいつでもfalseとなってしまいます。比較の際は同じ型を参照してください！"+`\n ${ProcessingLine}行目 - Method`)
+        switch(_codeArray[2]){
+            case "==": {
+               V1 == V2 ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+               break;
+            }
+            case "===": {
+               V1 === V2 ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+               break;
+            }
+            case "!==": {
+              V1 !== V2 ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+               break;
+            }
+            case "Istype": {
+               TYPEV1 === TYPEV2 ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+               break;
+            }
+            default : {
+               throw new ErrorMessage('[AK005] IF処理コンパイル',`IF処理の条件が当てはまりませんでした。\n${(TYPEV1 === "str" && TYPEV2 === "num") ? "貴方が使用するべき比較演算子は Istype ではありませんか？": ""}\n現在使用できる比較演算子は以下の通りです。\n\n == \n === \n !== \nIstype\n ${ProcessingLine}行目 - Method`)
+            }
+          }
+       
 
-       if(!HikakuArray_1 || !HikakuArray_2) throw new ErrorMessage("[AK012] 不明","比較先の変数が存在しません。"+`\n ${ProcessingLine}行目 - Method`)
+       
+    }
 
-       switch(_codeArray[2]){
-         case "==": {
-            HikakuArray_1[2].replace('v>',"") == HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
-            break;
-         }
-         case "===": {
-            HikakuArray_1[2].replace('v>',"") === HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
-            break;
-         }
-         case "!==": {
-            HikakuArray_1[2].replace('v>',"") !== HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
-            break;
-         }
-         case "Istype": {
-            HikakuArray_1[3] === HikakuArray_2[3] ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
-            break;
-         }
-         default : {
-            throw new ErrorMessage('[AK005] IF処理コンパイル',`IF処理の条件が当てはまりませんでした。\n${(HikakuArray_1[3] === "str" && HikakuArray_2[3] === "num") ? "貴方が使用するべき比較演算子は Istype ではありませんか？": ""}\n現在使用できる比較演算子は以下の通りです。\n\n == \n === \n !== \nIstype\n ${ProcessingLine}行目 - Method`)
-         }
-       }
+    OLDIF(v) {
+        if(complieVersion !== "OLD") return;
+        //! Version 1.0.0 1.0.1 のみ使用可能です。CompileOption.Aki を参照してください。
+        if(FunctionAdding === true) return;
+        const value = String(v).match(/if\s>[A-Z,a-z,0-9]+\s(===|!==|Istype|==)\s(>[A-Z,a-z,0-9]+|[A-Z,a-z,0-9]+)\sreturn\s{[^~]+}/)[0]
+        const _codeArray = value.replaceAll(' ',",").split(',')
+        //! 非推奨 - Version 1.0.2 で変更予定
+        let HikakuArray_1 = []
+        let HikakuArray_2 = []
+        CORE_Hensuu.forEach((v) => {
+            // if(!(Array(v).join(' ').match(/Set\s[A-Z,a-z,0-9]+\sv\>[A-Z,a-z,0-9]+\s(str|num|any)/))) throw new ErrorMessage('[AC001] 内部エラー',"不明なSetArrayです。この変数は使用できません : "+v)
+               if(v[1] === _codeArray[1].replace(">","")){
+                  HikakuArray_1 = String(v).split(',')
+               }
+               if(v[1] === _codeArray[3].replace(">","")){
+                  HikakuArray_2 = String(v).split(',')
+               }
+            })
+           /* if(AkiResponseFunctioning) {
+               TEMP_Hensuu.forEach((v) => {
+                 if(v[1] === _codeArray[1].replace(">","")){
+                     HikakuArray_1 = String(v).split(',')
+                  }
+                  if(v[1] === _codeArray[3].replace(">","")){
+                     HikakuArray_2 = String(v).split(',')
+                  }
+             })
+            }*/
+            //console.log(this.CheckHennsuu(HikakuArray_1[1]).includes(true) ? "haitteru" : "nai")
+            //console.log(this.CheckHennsuu(HikakuArray_2[1]).includes(true) ? "haitteru" : "nai")
+     
+            if(_codeArray[4] !== "return") throw new ErrorMessage('[AK007]', "Returnは必須です。"+`\n ${ProcessingLine}行目 - Method`)
+     
+            if(!(HikakuArray_1[3] === HikakuArray_2[3])) throw new ErrorMessage('[AK004] IF文',"IF文の型の比較はいつでもfalseとなってしまいます。比較の際は同じ型を参照してください！"+`\n ${ProcessingLine}行目 - Method`)
+     
+            if(!HikakuArray_1 || !HikakuArray_2) throw new ErrorMessage("[AK012] 不明","比較先の変数が存在しません。"+`\n ${ProcessingLine}行目 - Method`)
+     
+            switch(_codeArray[2]){
+              case "==": {
+                 HikakuArray_1[2].replace('v>',"") == HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+                 break;
+              }
+              case "===": {
+                 HikakuArray_1[2].replace('v>',"") === HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+                 break;
+              }
+              case "!==": {
+                 HikakuArray_1[2].replace('v>',"") !== HikakuArray_2[2].replace('v>',"") ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+                 break;
+              }
+              case "Istype": {
+                 HikakuArray_1[3] === HikakuArray_2[3] ? this.execute(_codeArray, true) : this.execute(_codeArray, false)
+                 break;
+              }
+              default : {
+                 throw new ErrorMessage('[AK005] IF処理コンパイル',`IF処理の条件が当てはまりませんでした。\n${(HikakuArray_1[3] === "str" && HikakuArray_2[3] === "num") ? "貴方が使用するべき比較演算子は Istype ではありませんか？": ""}\n現在使用できる比較演算子は以下の通りです。\n\n == \n === \n !== \nIstype\n ${ProcessingLine}行目 - Method`)
+              }
+            }
     }
 
     execute(Array, boolean){
-
         const _OLDIFDATA = String(Array).split(',')
 
         const Bool = boolean
@@ -228,6 +317,7 @@ class Core {
     }
 
     sayCompile(code){
+        if(FunctionAdding === true) return;
       const complieOld = code.replaceAll(' ',"-").replaceAll('say',"").split('-')
       let Kekka = ""
       complieOld.forEach((text) => {
@@ -275,20 +365,28 @@ class Core {
     }
 }
 mainCode.forEach((code) => {
+    let IF = "NEW"
     ProcessingLine++
     if(code.match(/#/)) return;
+    if(String(code).match(/@COMPOLD/)){
+        IF = "OLD"
+        new WarningMessage('Warning : 古い比較式の使用',"古い比較式は、いろいろな要因で非推奨とされています。\nこの式はStrの比較が出来ません。")
+    }
     if(String(code).match(/Set/)){
          new Core().set(code)
     }
-    if(String(code).match(/say/)){
-      //if(String(code).match(/if/)) return;
+    if(String(code).match(/say\s(>[A-Z,a-z,0-9]+\s|Space<\s|Str\+"[^~]+")+/) && !(String(code).match(/if\s(>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")+\s(===|!==|Istype|==)\s(\>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")\sreturn\s{[^~]+}/))){
          new Core().sayCompile(code)
     }
-    if(String(code).match(/if/)){
-        new Core().ifCompile(code)
+    if(String(code).match(/if\s(>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")+\s(===|!==|Istype|==)\s(\>[A-Z,a-z,0-9]+|Str\+\"[A-Z,a-z,0-9]+\")\sreturn\s{[^~]+}/)){
+        if(IF === "NEW") new Core().ifCompile(code)
+        else new Core().OLDIF(code)
     }
     if(String(code).match(/toInt/)){
         new Core().toInt(code)
+    }
+    if(String(code).match(/[A-Z,a-z,0-9]+\([A-Z,a-z,0-9]+\)/)){
+        new Core().runFunc(code)
     }
     if(String(code).match(/Aki>>http/)){
         AkiResponseFunctioning = true
@@ -314,6 +412,7 @@ mainCode.forEach((code) => {
        process.exit()
     } 
     if(String(code).match(/func/)){
+        FunctionAdding = true
         new Core().func(code)
     }
     //(AkiResponseFunctioning ? console.log(AkiResponseFunctioning) : void 0)

@@ -1,23 +1,27 @@
-# Tanosikereba ok !
+# Tanosikereba ok!
+
 
 Set A v>a str
 Set anythingName v>10 num
 Set Nube v>100 str
 Set NubeJSON v>100 str
+Set Nubejson v>nube str
 
-say >NubeJSON Str+"HelloWorld!"
+#say >NubeJSON Str+"HelloWorld!"
 
-say >A Space< Str+"+" Space< >anythingName Space< Str+"is" Space< Str+"20!"
+#say >A Space< Str+"+" Space< >anythingName Space< Str+"is" Space< Str+"20!"
 
-say >NubeJSON Space< WhatType=NubeJSON
+#say >NubeJSON Space< WhatType=NubeJSON
 
-if >A !== >NubeJSON return { say Str+"この条件はTrueです!!!" }
+#if >A !== >NubeJSON return { say Str+"この条件はTrueです!!!" }
 
-func tf Value::str => isStr Value 
+if >Nubejson === Str+"nube" return { say Str+"Trueすぎる!?" }
 
-Set FncResult tf(NubeJSON) Func 
+#func tf Value::str => if >Value === Str+"nube" return "OK"
 
-say >NubeJSON Space< >FncResult Str+"heyguys"
+#Set FncResult tf(NubeJSON) Func 
+
+#say >NubeJSON Space< >A Str+"heyguys"
 
 
 # ligegiuehrgiuhrglisrnthglkushlgikhDselrtiughseilurghseiurtghb.rkhkurjhgeruthg

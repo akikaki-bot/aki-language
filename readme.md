@@ -34,9 +34,11 @@ Sayメゾットではコンソールに出力をします。
 
     Say Str+"hello World!" >変数
 
-### Core - if
+### Core - if OLD-
   
 比較をします。
+
+このIF文を使う際には文頭に`@COMPOLD`を挿入してください。
 
 例文
 
@@ -60,6 +62,44 @@ Sayメゾットではコンソールに出力をします。
 
     if >Number Istype >VeryStrong return { say Str+"一緒にならないし、コンパイルエラーになるよ！" }
     if >Number Istype >IsNumber return { say Str+"型一緒！" } 
+```
+
+### Core - if
+
+比較をします。文章の比較もします。
+
+例文
+
+```aki
+    
+     Set Impotant v>NubejsonNubeNube str
+
+     #文字列の比較
+     if >Impotant === Str+"Nube" return { say Str+"一緒の文章だね！" }
+
+     Set Num v>10 num
+     Set StringNum v>10 str
+
+     #型が違う（strとnum）ので、コンパイルエラーになります。
+     if >Num === >StringNum return { say Str+"一緒じゃない！？" }
+
+     # numに変換できます。
+     StringNum toInt
+
+     #これならＯＫです。
+     if >Num === >StringNum return { say Str+"一緒じゃない！？" }
+
+     #文字列を数字に変換しようとすると str -> Maybe numになり、そのままではnum型として使用することはできません。
+     Impotant toInt
+
+     #コンパイルエラー
+     if >Num === >Impotant return { say Str+"だめだね～" }
+
+     # ほかにも
+     # == <- これなに？
+     # !== <- 値が違うか
+     # Istype <- 型一緒？
+     # があります。使ってみてね！
 ```
 
 ### Core - toInt
@@ -97,4 +137,22 @@ Str型の物をNumber型に変換します。
 
 ifコンパイルに成功した物を実行するための関数。
 
-必要引数はArray（関数型）
+必要引数はArray (if時渡された型)とbooleanです。
+
+
+### (内部処理) Core - func
+
+のちのち追加する関数を登録する関数です。
+
+これは動きます。
+
+必要引数はArray(func)です。
+
+処理すると内部配列にAkiLanguage_Function型の配列を追加します。
+
+
+### Core - runFunc
+
+後々追加する関数のやつ。
+
+めんどい。そのうち書きます。
