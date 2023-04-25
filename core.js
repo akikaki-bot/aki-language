@@ -123,12 +123,28 @@ class Core {
     runFunc(func) {
         //tf(NubeJSON)
         //が対象だから.... たぶんReplaceしてSplitすればいいや]
+        //todo : 引数がないバージョンの正規表現も追加する
        const funcCall = String(String(func).match(/[A-Z,a-z,0-9]+\([A-Z,a-z,0-9]+\)/)).replace('(',",").replace(')',"").split(',')
-       console.log(funcCall)
+       const FunctionArgments = funcCall[2] ? funcCall[2] : null
+       const FunctionCallingName = funcCall[0]
+
+
+       const FunctionData = CORE_Functions.filter(
+        /** @param {import("./types/type").AkiLanguage_Function} v */
+        function (v){
+          v.name === FunctionCallingName ? v : null
+          }
+       )
+
+       if(!FunctionData) {
+          throw new ErrorMessage("[Undfined Function]",`不明な関数が呼び出されました。¥n ${FunctionCallingName ? FunctionCallingName : "不明な関数"}は存在しない関数です。`)
+       }
+
+       this.exefunc(FunctionCallingName, FunctionData , FunctionArgments)
     }
 
-    exefunc(code) {
-
+    exefunc(...funcDatas) {
+       // TOdo : 処理部分描く
     }
 
     func (code) {
